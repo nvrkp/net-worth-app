@@ -56,7 +56,7 @@ header.scrolled .hbar{border-bottom-color:var(--hair)}
 .htotal{font-size:15px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .12s;height:20px}
 header.scrolled .htotal{opacity:1}
 .seg{display:inline-flex;border:1px solid var(--control);border-radius:9px;padding:2px;gap:2px;flex-shrink:0}
-.seg button{border:0;background:transparent;border-radius:7px;padding:5px 10px;font-size:13px;min-height:32px;color:var(--ink-2)}
+.seg button{border:0;background:transparent;border-radius:7px;padding:5px 12px;font-size:14px;min-height:38px;color:var(--ink-2)}
 .seg button[aria-pressed=true]{background:var(--accent-strong);color:var(--on-accent);font-weight:600}
 
 /* layout */
@@ -74,7 +74,7 @@ h2 small{font-size:12px;font-weight:400;color:var(--muted)}
 .hero .v{font-size:40px;font-weight:600;letter-spacing:-.015em;line-height:1.05}
 .hero .d{font-size:15px;margin-top:6px}
 .status{font-size:12px;color:var(--muted);margin:8px 0 2px;display:flex;gap:7px;align-items:center;flex-wrap:wrap;min-height:18px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--s3);display:inline-block;flex-shrink:0}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;flex-shrink:0}
 .dot.busy{background:var(--accent);animation:pulse 1s infinite alternate}
 .dot.warn{background:var(--down)}
 .dot.old{background:var(--neutral)}
@@ -93,6 +93,7 @@ button.tile{width:100%}
 /* donut */
 .alloc{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center}
 .alloc svg{width:132px;height:132px;display:block}
+@media (max-width:359px){.alloc{grid-template-columns:1fr;justify-items:center}.alloc .legend{width:100%}}
 .legend{display:flex;flex-direction:column;gap:6px;font-size:13px}
 .legend .li{display:grid;grid-template-columns:12px 1fr auto;gap:8px;align-items:center}
 .sw{width:10px;height:10px;border-radius:3px}
@@ -112,9 +113,9 @@ button.tile{width:100%}
 .row1{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 .row1 .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .row1 .val{font-weight:600;white-space:nowrap}
-.row2{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--ink-2);margin-top:3px}
+.row2{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px;font-size:12px;color:var(--ink-2);margin-top:3px}
 .row2 span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.row2 span:last-child{text-align:right;white-space:nowrap;flex-shrink:0}
+.row2 span:last-child{text-align:right;white-space:nowrap;flex-shrink:0;margin-left:auto}
 .share{height:3px;background:var(--plane);border-radius:2px;margin-top:8px;overflow:hidden}
 .share i{display:block;height:100%;background:var(--accent);border-radius:2px}
 .chev{display:inline-block;transition:transform .12s;color:var(--muted);margin-left:6px;font-size:12px}
@@ -123,21 +124,23 @@ button.tile{width:100%}
 .pos .row1 .n{font-weight:400}
 .pos .row1 .val{font-weight:400}
 .warn{color:var(--down-ink)}
+.tag{font-size:11px;color:var(--down-ink);border:1px solid var(--down-ink);border-radius:4px;padding:0 4px;margin-left:6px;font-weight:400;vertical-align:1px}
+.closed>button.head .n,.closed>button.head .val{color:var(--ink-2);font-weight:400}
 .tools{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0 12px}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
 .chips::-webkit-scrollbar{display:none}
-.chip{border:1px solid var(--control);background:transparent;border-radius:16px;padding:5px 12px;font-size:13px;min-height:32px;white-space:nowrap;color:var(--ink-2)}
+.chip{border:1px solid var(--control);background:transparent;border-radius:20px;padding:5px 14px;font-size:14px;min-height:40px;white-space:nowrap;color:var(--ink-2)}
 .chip[aria-pressed=true]{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--on-accent);font-weight:600}
 .search{width:100%;padding:9px 12px;border:1px solid var(--control);border-radius:10px;background:var(--panel);font-size:16px;margin-bottom:10px}
 
 /* chart screen */
 .rangebar{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:4px 0 10px}
-.rangebar button{border:0;background:var(--plane);border-radius:8px;padding:7px 0;font-size:13px;min-height:36px;color:var(--ink-2)}
+.rangebar button{border:0;background:var(--plane);border-radius:8px;padding:7px 0;font-size:14px;min-height:44px;color:var(--ink-2)}
 .rangebar button[aria-pressed=true]{background:var(--accent-strong);color:var(--on-accent);font-weight:600}
 .chead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:2px 0 6px;min-height:46px}
 .chead .big{font-size:22px;font-weight:600}
 .chead .sub{font-size:12px;color:var(--ink-2)}
-.chart{position:relative;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.chart{position:relative;touch-action:pan-y;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
 .chart svg{display:block;width:100%;height:260px}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;font-size:13px}
 .facts div>span{display:block;font-size:11px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
@@ -145,7 +148,7 @@ button.tile{width:100%}
 table.wt{width:100%;border-collapse:collapse;font-size:14px}
 table.wt th{font-size:11px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em;text-align:right;padding:6px 0;border-bottom:1px solid var(--hair)}
 table.wt th:first-child,table.wt td:first-child{text-align:left}
-table.wt td{text-align:right;padding:9px 0;border-bottom:1px solid var(--hair)}
+table.wt td{text-align:right;padding:13px 0;border-bottom:1px solid var(--hair)}
 table.wt tr:last-child td{border-bottom:0}
 table.wt tr.sel td{color:var(--accent-ink);font-weight:600}
 
@@ -319,7 +322,7 @@ const store = {
 const S = {
   data: null, view: null, tab: store.get("tab", "home"), range: store.get("range", "ytd"),
   mode: store.get("mode", "value"), hide: store.get("hide", false), group: store.get("group", "acc"),
-  sort: store.get("sort", "value"), open: new Set(store.get("open", [])), q: "",
+  sort: store.get("sort", "value"), open: new Set(store.get("open", [])), q: "", shut: new Set(), showClosed: false,
   busy: false, lastSync: 0, msg: null, scroll: {}
 };
 
@@ -344,13 +347,15 @@ function krShort(x){
   if (a >= 1e4) return sgn(x) + nf0.format(a / 1e3) + "k";
   return sgn(x) + nf0.format(a);
 }
+// one decimal for % everywhere (house rule); a figure that rounds to zero has no sign and no colour
 function pct(x, dec){
   if (!num(x)) return "-";
-  const f = dec === 1 ? nf1 : nf2;
-  const r = Number(f.format(Math.abs(x)).replace(/\./g, "").replace(",", "."));
-  return (r === 0 ? "" : (x < 0 ? "−" : "+")) + f.format(Math.abs(x)) + " %";
+  const d = dec === 2 ? 2 : 1, r = rnd(x, d), f = d === 2 ? nf2 : nf1;
+  return (r === 0 ? "" : (r < 0 ? "−" : "+")) + f.format(Math.abs(r)) + " %";
 }
 const cls = x => !num(x) || Math.abs(x) < 1e-9 ? "" : (x > 0 ? "up" : "down");
+const clsP = (x, dec) => cls(rnd(x, dec === 2 ? 2 : 1));
+const clsK = x => cls(num(x) ? Math.round(x) : x);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 const MONTHS = ["jan.","feb.","mar.","apr.","maj","jun.","jul.","aug.","sep.","okt.","nov.","dec."];
 function dateLabel(iso, short){
@@ -363,13 +368,16 @@ function whenLabel(iso){
   const d = new Date(iso); if (isNaN(d)) return iso;
   const now = new Date(), day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
   const diff = Math.round((day(now) - day(d)) / 864e5);
-  const hm = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  const hm = String(d.getHours()).padStart(2, "0") + "." + String(d.getMinutes()).padStart(2, "0");
   if (diff === 0) return "i dag kl. " + hm;
   if (diff === 1) return "i går kl. " + hm;
   return d.getDate() + ". " + MONTHS[d.getMonth()] + " kl. " + hm;
 }
-const sp = (x, dec, star) => '<span class="' + cls(x) + '">' + esc(pct(x, dec)) + (star ? "*" : "") + "</span>";
-const sk = (x, signed) => '<span class="' + cls(x) + '">' + esc(kr(x, signed)) + "</span>";
+// any other number that can be negative: real minus sign, not the hyphen Intl gives
+const sn = (nf, x) => num(x) ? sgn(x) + nf.format(Math.abs(x)) : "-";
+const rnd = (x, dec) => num(x) ? Math.round(x * Math.pow(10, dec)) / Math.pow(10, dec) : x;
+const sp = (x, dec, star) => '<span class="' + clsP(x, dec) + '">' + esc(pct(x, dec)) + (star ? "*" : "") + "</span>";
+const sk = (x, signed) => '<span class="' + (S.hide ? "" : clsK(x)) + '">' + esc(kr(x, signed)) + "</span>";
 
 // ---------- GitHub ----------
 const token = () => store.get("token", "");
@@ -440,11 +448,13 @@ async function sync(userAsked){
     const v = newest(newest(mac, live), S.data);
     if (v && v !== S.data){ S.data = v; store.set("data", v); render(); }
     const age = (Date.now() - priceTime(S.data)) / 60e3;
-    const recent = Date.now() - store.get("dispatched", 0) < 3 * 60e3;
+    const recent = Date.now() - store.get("dispatched", 0) < 10 * 60e3;
     if (userAsked || (age > staleLimit() && !recent)){
       setStatus("Henter nye kurser i skyen …", "busy");
-      const t0 = Date.now();
-      await dispatch();
+      const run = await lastRun();
+      const busy = run && (run.status === "queued" || run.status === "in_progress") && Date.now() - Date.parse(run.created_at) < 10 * 60e3;
+      const t0 = busy ? Date.parse(run.created_at) : Date.now();
+      if (!busy) await dispatch();      // one already running: wait for it instead of starting another
       await poll(t0);
     } else setStatus(null);
   }catch(e){
@@ -509,16 +519,16 @@ function renderHome(){
       '<path d="' + line + '" fill="none" stroke="var(--up)" stroke-width="1.8" vector-effect="non-scaling-stroke" clip-path="url(#su)"/>' +
       '<path d="' + line + '" fill="none" stroke="var(--down)" stroke-width="1.8" vector-effect="non-scaling-stroke" clip-path="url(#sd)"/>';
   } else svg.innerHTML = "";
-  svg.onclick = () => { S.range = "ytd"; S.mode = "gain"; store.set("range", "ytd"); store.set("mode", "gain"); go("chart"); };
+  svg.onclick = () => { S.range = "ytd"; S.mode = "gain"; store.set("range", "ytd"); store.set("mode", "gain"); go("chart", true); };
   // tiles
   const star = v.method_forced ? "*" : "";
   const tile = (label, p, g, key) => '<button class="tile" data-range="' + (key || "") + '"><div class="l">' + label + '</div><div class="p">' +
-    sp(p, key ? 1 : 2, key ? star : "") + '</div><div class="g">' + sk(g, true) + "</div></button>";
+    sp(p, 1, key ? star : "") + '</div><div class="g">' + sk(g, true) + "</div></button>";
   $("tiles").innerHTML = tile("I dag", v.day[1], v.day[0], "") + ["ytd", "1y", "max"].map(k => { const x = win(k); return tile(x.label, x.pct, x.gain, k); }).join("");
-  $("tiles").querySelectorAll("button[data-range]").forEach(b => b.onclick = () => { if (b.dataset.range){ S.range = b.dataset.range; store.set("range", S.range); } go("chart"); });
+  $("tiles").querySelectorAll("button[data-range]").forEach(b => b.onclick = () => { if (b.dataset.range){ S.range = b.dataset.range; store.set("range", S.range); } go("chart", true); });
   // donut
   const pos = v.buckets.filter(b => b.value > 0), neg = v.buckets.filter(b => b.value < 0);
-  const sum = pos.reduce((a, b) => a + b.value, 0) || 1;
+  const assets = pos.reduce((a, b) => a + b.value, 0), sum = assets || 1;
   const R = 52, C = 2 * Math.PI * R; let off = 0;
   $("donut").innerHTML = '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="var(--plane)" stroke-width="16"/>' +
     pos.map(b => { const len = b.value / sum * C, gap = pos.length > 1 ? Math.min(2, len / 3) : 0;
@@ -526,7 +536,7 @@ function renderHome(){
         Math.max(len - gap, 0.01).toFixed(2) + " " + C.toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '" transform="rotate(-90 66 66)"/>';
       off += len; return s; }).join("") +
     '<text x="66" y="62" text-anchor="middle" font-size="10" fill="var(--ink-2)">Aktiver</text><text x="66" y="78" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)">' +
-    esc(S.hide ? MASK : krShort(sum)) + "</text>";
+    esc(S.hide ? MASK : (krShort(assets) || "0")) + "</text>";
   $("allocsub").textContent = pos.length + (pos.length === 1 ? " klasse" : " klasser");
   $("legend").innerHTML = pos.map(b => '<div class="li"><i class="sw" style="background:var(' + (BUCKET_COLOR[b.name] || "--neutral") + ')"></i><span>' + esc(b.name) +
     '</span><b>' + esc(nf1.format(b.value / sum * 100)) + ' %</b><span class="amt">' + esc(kr(b.value)) + "</span></div>").join("");
@@ -542,13 +552,17 @@ function renderHome(){
   $("movers").innerHTML = (ups.length || dns.length) ? ups.concat(dns).map(mrow).join("") : '<div class="mut">Ingen kursbevægelser endnu i dag.</div>';
   $("movers").querySelectorAll("[data-k]").forEach(b => b.onclick = () => openPos(b.dataset.k));
   // accounts summary
-  $("nacc").textContent = v.accounts.length + " konti · " + v.n_positions + " positioner";
-  $("acclist").innerHTML = v.accounts.map(a => '<div class="acc"><button class="head" data-acc="' + esc(a.name) + '"><div class="row1"><span class="n">' + esc(a.name) +
-    '</span><span class="val">' + esc(kr(a.value)) + '</span></div><div class="row2"><span>' + (num(a.share) ? esc(nf1.format(a.share)) + " % af formuen" : "") +
+  const live = v.accounts.filter(a => !a.closed), shut = v.accounts.length - live.length;
+  $("nacc").textContent = live.length + " konti" + (shut ? " · " + shut + " lukkede" : "");
+  $("acclist").innerHTML = live.map(a => '<div class="acc"><button class="head" data-acc="' + esc(a.name) + '"><div class="row1"><span class="n">' + esc(a.name) +
+    '</span><span class="val">' + esc(kr(a.value)) + '</span></div><div class="row2"><span>' + (num(a.share) ? esc(sn(nf1, a.share)) + " % af formuen" : "") +
     "</span><span>" + sp(a.day[1]) + " i dag · " + sp(a.ytd[1], 1, a.ytd_star) + ' i år</span></div><div class="share"><i style="width:' +
     Math.max(0, Math.min(100, a.share || 0)).toFixed(1) + '%"></i></div></button></div>').join("");
-  $("acclist").querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { S.group = "acc"; S.open.add(b.dataset.acc); saveOpen(); go("hold");
-    requestAnimationFrame(() => { const el = document.querySelector('#holdings [data-acc="' + CSS.escape(b.dataset.acc) + '"]'); if (el) el.scrollIntoView({block: "start"}); window.scrollBy(0, -70); }); });
+  $("acclist").querySelectorAll("[data-acc]").forEach(b => b.onclick = () => {
+    S.group = "acc"; store.set("group", "acc"); S.q = ""; $("q").value = ""; S.shut.clear();
+    S.open.add(b.dataset.acc); saveOpen(); go("hold", true);
+    requestAnimationFrame(() => { const el = document.querySelector('#holdings [data-acc="' + CSS.escape(b.dataset.acc) + '"]');
+      if (el){ const y = el.getBoundingClientRect().top + window.scrollY - $("hdr").offsetHeight - 8; window.scrollTo(0, Math.max(0, y)); } }); });
 }
 
 // ---------- chart screen ----------
@@ -606,8 +620,9 @@ function drawChart(pts){
   let g = ticks.map(v => '<line x1="' + L + '" x2="' + (W - Rr) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="var(--grid)" stroke-width="0.7"/>' +
     (S.hide ? "" : '<text x="' + (W - Rr + 6) + '" y="' + (Y(v) + 4).toFixed(1) + '" font-size="11" fill="var(--muted)">' + esc(krShort(v) || "0") + "</text>")).join("");
   // x labels: start, middle, end
-  const xl = [0, Math.floor(pts.length / 2), pts.length - 1].map((i, k) => '<text x="' + X(t[i]).toFixed(1) + '" y="' + (H - 6) + '" font-size="11" fill="var(--muted)" text-anchor="' +
-    ["start", "middle", "end"][k] + '">' + esc(dateLabel(pts[i][0], (t[t.length - 1] - t[0]) < 300 * 864e5)) + "</text>").join("");
+  const tm = (t[0] + t[t.length - 1]) / 2; let mid = 0; t.forEach((x, j) => { if (Math.abs(x - tm) < Math.abs(t[mid] - tm)) mid = j; });
+  const xl = (W < 330 ? [0, pts.length - 1] : [0, mid, pts.length - 1]).map((i, k, arr) => '<text x="' + X(t[i]).toFixed(1) + '" y="' + (H - 6) + '" font-size="11" fill="var(--muted)" text-anchor="' +
+    (arr.length === 2 ? ["start", "end"] : ["start", "middle", "end"])[k] + '">' + esc(dateLabel(pts[i][0], (t[t.length - 1] - t[0]) < 300 * 864e5)) + "</text>").join("");
   let body;
   if (S.mode === "gain"){
     const z = Y(0).toFixed(1), area = path + "L" + X(t[t.length - 1]).toFixed(1) + " " + z + "L" + X(t[0]).toFixed(1) + " " + z + "Z";
@@ -630,7 +645,7 @@ function drawChart(pts){
 function scrub(ev){
   if (!chartState) return;
   const svg = $("csvg"), r = svg.getBoundingClientRect(), cs = chartState;
-  const cx = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left) * cs.W / r.width;
+  const cx = (ev.clientX - r.left) * cs.W / r.width;
   let i = 0, best = Infinity; cs.t.forEach((x, j) => { const dd = Math.abs(cs.X(x) - cx); if (dd < best){ best = dd; i = j; } });
   const c = svg.querySelector("#cc"), l = svg.querySelector("#cl");
   c.setAttribute("cx", cs.X(cs.t[i])); c.setAttribute("cy", cs.Y(cs.y[i])); c.style.display = "";
@@ -658,7 +673,7 @@ function sorted(list){
 }
 function posRow(p, showAcc){
   return '<button class="pos" data-k="' + esc(p.account + "|" + p.name) + '"><div class="row1"><span class="n">' + esc(p.name) +
-    (p.stale ? ' <span class="warn" aria-label="ingen frisk kurs">⚠</span>' : "") + '</span><span class="val">' + esc(kr(p.value)) +
+    (p.stale ? '<span class="tag">gammel kurs</span>' : "") + '</span><span class="val">' + esc(kr(p.value)) +
     '</span></div><div class="row2"><span>' + esc([showAcc ? p.account : p.ticker, p.bucket].filter(Boolean).join(" · ")) + "</span><span>" +
     sp(p.day[1]) + " · " + sp(p.ytd[1], 1, p.ytd_star) + " i år</span></div></button>";
 }
@@ -674,15 +689,28 @@ function renderHold(){
     const ps = sorted(allPositions().filter(hit));
     html = ps.length ? '<div class="acc">' + ps.map(p => posRow(p, true)).join("") + "</div>" : '<p class="mut">Ingen positioner matcher.</p>';
   } else {
-    const accs = v.accounts.map(a => ({a, ps: a.positions.map(p => Object.assign({account: a.name}, p)).filter(hit)})).filter(x => x.ps.length || (!q));
-    html = accs.map(({a, ps}) => { const open = S.open.has(a.name) || !!q;
-      return '<div class="acc' + (open ? " open" : "") + '"><button class="head" data-acc="' + esc(a.name) + '" aria-expanded="' + open + '"><div class="row1"><span class="n">' + esc(a.name) +
+    // accounts follow the same sort as positions: value, today %, this year %, name
+    const accs = sorted(v.accounts.map(a => ({a, name: a.name, value: a.value, day: a.day, ytd: a.ytd,
+      ps: a.positions.map(p => Object.assign({account: a.name}, p)).filter(hit)})).filter(x => x.ps.length || !q));
+    const block = ({a, ps}) => { const open = q ? !S.shut.has(a.name) : S.open.has(a.name);
+      return '<div class="acc' + (open ? " open" : "") + (a.closed ? " closed" : "") + '"><button class="head" data-acc="' + esc(a.name) + '" aria-expanded="' + open + '"><div class="row1"><span class="n">' + esc(a.name) +
         '<span class="chev">›</span></span><span class="val">' + esc(kr(a.value)) + '</span></div><div class="row2"><span>' + a.positions.length + (a.positions.length === 1 ? " position" : " positioner") +
-        (num(a.share) ? " · " + esc(nf1.format(a.share)) + " %" : "") + "</span><span>" + sk(a.day[0], true) + " i dag · " + sp(a.ytd[1], 1, a.ytd_star) + " i år</span></div></button>" +
-        (open ? sorted(ps).map(p => posRow(p, false)).join("") : "") + "</div>"; }).join("") || '<p class="mut">Ingen positioner matcher.</p>';
+        (num(a.share) && !a.closed ? " · " + esc(sn(nf1, a.share)) + " %" : "") + "</span><span>" + (a.closed ? "lukket" : sk(a.day[0], true) + " i dag · " + sp(a.ytd[1], 1, a.ytd_star) + " i år") + "</span></div></button>" +
+        (open ? sorted(ps).map(p => posRow(p, false)).join("") : "") + "</div>"; };
+    const live = accs.filter(x => !x.a.closed), shut = accs.filter(x => x.a.closed);
+    html = live.map(block).join("");
+    if (shut.length){
+      const showAll = S.showClosed || !!q;
+      html += '<button class="chip" id="closedbtn" style="width:100%;margin:6px 0 10px" aria-expanded="' + showAll + '">' + (showAll ? "Skjul" : "Vis") + " lukkede konti (" + shut.length + ")</button>" +
+        (showAll ? shut.map(block).join("") : "");
+    }
+    if (!html) html = '<p class="mut">Ingen positioner matcher.</p>';
   }
   $("holdings").innerHTML = html;
-  $("holdings").querySelectorAll("button.head[data-acc]").forEach(b => b.onclick = () => { const n = b.dataset.acc; S.open.has(n) ? S.open.delete(n) : S.open.add(n); saveOpen(); renderHold(); });
+  $("holdings").querySelectorAll("button.head[data-acc]").forEach(b => b.onclick = () => { const n = b.dataset.acc;
+    if (S.q.trim()){ S.shut.has(n) ? S.shut.delete(n) : S.shut.add(n); } else { S.open.has(n) ? S.open.delete(n) : S.open.add(n); saveOpen(); }
+    renderHold(); });
+  const cb = $("closedbtn"); if (cb) cb.onclick = () => { S.showClosed = !S.showClosed; renderHold(); };
   $("holdings").querySelectorAll("button.pos[data-k]").forEach(b => b.onclick = () => openPos(b.dataset.k));
 }
 function saveOpen(){ store.set("open", Array.from(S.open)); }
@@ -691,12 +719,12 @@ function saveOpen(){ store.set("open", Array.from(S.open)); }
 let lastFocus = null;
 function openPos(k){
   const p = allPositions().find(x => x.account + "|" + x.name === k); if (!p) return;
-  const qty = S.hide ? MASK : (num(p.qty) ? nfq.format(p.qty) : "-");
-  const px = num(p.price) ? nfq.format(p.price) + " " + (p.ccy || "") : "-";
-  const cost = num(p.cost_price) && p.cost_price ? nfq.format(p.cost_price) + " " + (p.ccy || "") : "-";
-  const rows = [["Værdi", esc(kr(p.value))], ["Andel af formuen", num(p.share) ? esc(nf1.format(p.share)) + " %" : "-"],
+  const qty = S.hide ? MASK : sn(nfq, p.qty);
+  const px = num(p.price) ? sn(nfq, p.price) + " " + (p.ccy || "") : "-";
+  const cost = num(p.cost_price) && p.cost_price ? sn(nfq, p.cost_price) + " " + (p.ccy || "") : "-";
+  const rows = [["Værdi", esc(kr(p.value))], ["Andel af formuen", num(p.share) ? esc(sn(nf1, p.share)) + " %" : "-"],
     ["I dag", sk(p.day[0], true) + " " + sp(p.day[1])], ["I år", sk(p.ytd[0], true) + " " + sp(p.ytd[1], 1, p.ytd_star)],
-    ["Siden køb", sk(p.total[0], true) + " " + sp(p.total[1], 1)], ["Antal", esc(qty) + (p.mult && p.mult !== 1 ? " × " + esc(nfq.format(p.mult)) : "")],
+    ["Siden køb", sk(p.total[0], true) + " " + sp(p.total[1], 1)], ["Antal", esc(qty) + (p.mult && p.mult !== 1 ? " × " + esc(sn(nfq, p.mult)) : "")],
     ["Kurs", esc(px)], ["Købskurs", esc(cost)], ["Retning", p.short ? "Short" : "Long"], ["Købt", esc(p.bought ? dateLabel(p.bought) : "-")],
     ["Konto", esc(p.account)], ["Ejer", esc(p.owner)]];
   $("sheet").innerHTML = '<div class="grab"></div><h3 id="shTitle">' + esc(p.name) + '</h3><div class="sub">' + esc([p.ticker, p.bucket].filter(Boolean).join(" · ")) +
@@ -724,15 +752,17 @@ function renderMore(){
   $("owners").innerHTML = Object.entries(v.owners || {}).map(([k, x]) => "<dt>" + esc(k.charAt(0).toUpperCase() + k.slice(1)) + "</dt><dd>" + esc(kr(x)) + "</dd>").join("") ||
     "<dt>-</dt><dd></dd>";
   $("about").innerHTML = "<p><b>Samme tal som Mac-appen.</b> Telefonen viser de tal, Net Worth regner ud: værdi i kroner, i dag fra sidste lukkekurs og afkast med penge ind og ud trukket fra.</p>" +
+    "<p><b>Maks</b> regnes fra den første indbetaling (" + esc(dateLabel((win("max") || {}).since)) + "); historikken har nogle kontantsaldi tilbage til 1978, som aldrig bevægede sig.</p>" +
     "<p><b>Uden bolig</b> skjuler lejligheden og al gæld, ligesom «Bolig & gæld» i appen. <b>Med bolig</b> tæller det hele med; så er tallene gearede.</p>" +
     "<p><b>Metode: " + (v.method === "mwr" ? "pengevægtet" : "tidsvægtet") + ".</b> Tal med * er pengevægtede, fordi kontant og gæld kun har en saldo på kontoudtogsdage.</p>" +
-    "<p><b>Opdatering.</b> Mac'en sender tal efter hver opdatering. GitHub henter nye kurser kl. 22.15 hver aften og når du åbner appen med kurser over " + STALE_OPEN_MIN + " minutter gamle (hverdage 8 til 22.30), ellers over to timer gamle. Træk ned for at hente nu.</p>";
+    "<p><b>Opdatering.</b> Mac'en sender tal efter hver opdatering. GitHub henter nye kurser efter US-lukning hver aften (kl. 22.15, om sommeren 23.15) og når du åbner appen med kurser over " + STALE_OPEN_MIN + " minutter gamle (hverdage 8 til 22.30), ellers over to timer gamle. Træk ned for at hente nu.</p>";
 }
 
 // ---------- navigation ----------
-function go(tab){
+function go(tab, deep){
   if (!TABS.includes(tab)) tab = "home";
   S.scroll[S.tab] = window.scrollY;
+  if (deep) S.scroll[tab] = 0;      // a tile or row opens its target at the top
   S.tab = tab; store.set("tab", tab);
   TABS.forEach(k => { $("t-" + k).classList.toggle("hidden", k !== tab); $("b-" + k).setAttribute("aria-selected", k === tab); });
   $("htitle").textContent = {home: "Formue", chart: "Udvikling", hold: "Beholdning", more: "Mere"}[tab];
@@ -794,10 +824,11 @@ $("m-value").onclick = () => { S.mode = "value"; store.set("mode", "value"); ren
 $("m-gain").onclick = () => { S.mode = "gain"; store.set("mode", "gain"); renderChart(); };
 $("g-acc").onclick = () => { S.group = "acc"; store.set("group", "acc"); renderHold(); };
 $("g-pos").onclick = () => { S.group = "pos"; store.set("group", "pos"); renderHold(); };
-$("q").addEventListener("input", () => { S.q = $("q").value; renderHold(); });
+$("q").addEventListener("input", () => { S.q = $("q").value; S.shut.clear(); renderHold(); });
 const chartBox = $("chart");
-chartBox.addEventListener("touchstart", scrub, {passive: true}); chartBox.addEventListener("touchmove", scrub, {passive: true});
-chartBox.addEventListener("touchend", unscrub); chartBox.addEventListener("mousemove", scrub); chartBox.addEventListener("mouseleave", unscrub);
+// pointer events: one path for finger and mouse, so a tap's synthetic mouse events cannot leave the crosshair stuck
+chartBox.addEventListener("pointerdown", scrub); chartBox.addEventListener("pointermove", e => { if (e.pointerType === "mouse" || e.buttons || e.pressure) scrub(e); });
+["pointerup", "pointercancel", "pointerleave"].forEach(n => chartBox.addEventListener(n, e => { if (n !== "pointerleave" || e.pointerType === "mouse") unscrub(); }));
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && token() && Date.now() - S.lastSync > 60e3) sync(false); });
 let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (S.data && S.tab === "chart") renderChart(); }, 150); });
 setInterval(() => { if (S.data && !S.busy) renderStatus(); }, 60e3);
