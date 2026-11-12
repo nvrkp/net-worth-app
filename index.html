@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Net Worth</title>
+<meta name="description" content="Formue fra Net Worth-appen på Mac'en, opdateret ved US-lukning og når appen åbnes.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Net Worth">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#fcfcfb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{
+  --surface:#fcfcfb;--plane:#f4f4f1;--panel:#ffffff;--accent-tint:#eef4fc;
+  --ink:#0b0b0b;--ink-2:#52514e;--muted:#6f6d67;--hair:#e1e0d9;--control:#8d8b84;
+  --focus:#2a78d6;--accent:#2a78d6;--accent-ink:#1c5cab;--accent-strong:#1f5fbf;--on-accent:#fff;
+  --up:#2a78d6;--up-ink:#1c5cab;--down:#d03b3b;--down-ink:#b3261e;--neutral:#c3c2b7;--grid:#e1e0d9;
+  --s1:#2a78d6;--s2:#e45f28;--s3:#12996a;--s4:#b07800;--s5:#d0588a;--s6:#008300;--s7:#6250d6;--s8:#e34948;
+  --band:#6250d6;--tabbar:rgba(252,252,251,.92);--scrim:rgba(11,11,11,.35);
+  --tab-h:56px;color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root{
+  --surface:#0b1020;--plane:#0f1933;--panel:#121a33;--accent-tint:#142447;
+  --ink:#e9eef6;--ink-2:#9aa7c7;--muted:#8590ad;--hair:#1f2945;--control:#5c6993;
+  --focus:#6aa7ff;--accent:#6aa7ff;--accent-ink:#8dbcff;--accent-strong:#6aa7ff;--on-accent:#0b1020;
+  --up:#6aa7ff;--up-ink:#8dbcff;--down:#ff8f87;--down-ink:#ff8f87;--neutral:#3d4767;--grid:#1c2540;
+  --s1:#6aa7ff;--s2:#f58b5c;--s3:#3ccf95;--s4:#e8b13a;--s5:#f08cb4;--s6:#5cc85c;--s7:#a395ff;--s8:#ff7a78;
+  --band:#a395ff;--tabbar:rgba(11,16,32,.92);--scrim:rgba(0,0,0,.55);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--surface);color:var(--ink);
+  font:15px/1.4 "Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  -webkit-text-size-adjust:100%;font-variant-numeric:tabular-nums}
+body{min-height:100vh;overscroll-behavior-y:none}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+a{color:var(--accent-ink)}
+.hidden{display:none!important}
+.up{color:var(--up-ink)}.down{color:var(--down-ink)}.mut{color:var(--muted)}.ink2{color:var(--ink-2)}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:var(--surface);padding-top:env(safe-area-inset-top)}
+header .band{height:4px;background:var(--band)}
+.hbar{max-width:640px;margin:0 auto;padding:8px 16px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid transparent;transition:border-color .12s}
+header.scrolled .hbar{border-bottom-color:var(--hair)}
+.htitle{min-width:0}
+.kicker{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+.htotal{font-size:15px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .12s;height:20px}
+header.scrolled .htotal{opacity:1}
+.seg{display:inline-flex;border:1px solid var(--control);border-radius:9px;padding:2px;gap:2px;flex-shrink:0}
+.seg button{border:0;background:transparent;border-radius:7px;padding:5px 10px;font-size:13px;min-height:32px;color:var(--ink-2)}
+.seg button[aria-pressed=true]{background:var(--accent-strong);color:var(--on-accent);font-weight:600}
+
+/* layout */
+main{max-width:640px;margin:0 auto;padding:4px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 28px)}
+.ptr{height:0;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;font-size:12px;color:var(--muted)}
+section.tab{animation:fade .12s ease-out}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){section.tab{animation:none}*{transition:none!important}}
+h2{font-size:17px;font-weight:600;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+h2 small{font-size:12px;font-weight:400;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:14px;margin:0 0 12px}
+
+/* hero */
+.hero{padding:6px 0 4px}
+.hero .v{font-size:40px;font-weight:600;letter-spacing:-.015em;line-height:1.05}
+.hero .d{font-size:15px;margin-top:6px}
+.status{font-size:12px;color:var(--muted);margin:8px 0 2px;display:flex;gap:7px;align-items:center;flex-wrap:wrap;min-height:18px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--s3);display:inline-block;flex-shrink:0}
+.dot.busy{background:var(--accent);animation:pulse 1s infinite alternate}
+.dot.warn{background:var(--down)}
+.dot.old{background:var(--neutral)}
+@keyframes pulse{to{opacity:.25}}
+.spark{display:block;width:100%;height:58px;margin:12px 0 0}
+.sparkcap{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:2px 0 14px}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:10px 12px;text-align:left}
+button.tile{width:100%}
+.tile .l{font-size:11px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+.tile .p{font-size:20px;font-weight:600;margin-top:2px}
+.tile .g{font-size:13px}
+
+/* donut */
+.alloc{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center}
+.alloc svg{width:132px;height:132px;display:block}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.legend .li{display:grid;grid-template-columns:12px 1fr auto;gap:8px;align-items:center}
+.sw{width:10px;height:10px;border-radius:3px}
+.legend .amt{font-size:12px;color:var(--ink-2);grid-column:2 / 4;margin-top:-4px}
+.debt{margin-top:10px;padding-top:10px;border-top:1px solid var(--hair);font-size:13px;display:flex;justify-content:space-between}
+
+/* movers */
+.mover,button.mover{display:grid;width:100%;text-align:left;background:transparent;border:0;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 0;border-top:1px solid var(--hair)}
+.mover:first-child{border-top:0}
+.mover .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mbar{grid-column:1 / 3;height:4px;border-radius:2px;background:var(--plane);overflow:hidden}
+.mbar i{display:block;height:100%;border-radius:2px}
+
+/* lists */
+.acc{background:var(--panel);border:1px solid var(--hair);border-radius:12px;margin:0 0 10px;overflow:hidden}
+.acc>button.head{display:block;width:100%;text-align:left;background:transparent;border:0;padding:12px 14px;min-height:56px}
+.row1{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.row1 .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.row1 .val{font-weight:600;white-space:nowrap}
+.row2{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--ink-2);margin-top:3px}
+.row2 span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.row2 span:last-child{text-align:right;white-space:nowrap;flex-shrink:0}
+.share{height:3px;background:var(--plane);border-radius:2px;margin-top:8px;overflow:hidden}
+.share i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.chev{display:inline-block;transition:transform .12s;color:var(--muted);margin-left:6px;font-size:12px}
+.acc.open .chev{transform:rotate(90deg)}
+.pos{display:block;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid var(--hair);padding:10px 14px;min-height:52px}
+.pos .row1 .n{font-weight:400}
+.pos .row1 .val{font-weight:400}
+.warn{color:var(--down-ink)}
+.tools{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0 12px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--control);background:transparent;border-radius:16px;padding:5px 12px;font-size:13px;min-height:32px;white-space:nowrap;color:var(--ink-2)}
+.chip[aria-pressed=true]{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--on-accent);font-weight:600}
+.search{width:100%;padding:9px 12px;border:1px solid var(--control);border-radius:10px;background:var(--panel);font-size:16px;margin-bottom:10px}
+
+/* chart screen */
+.rangebar{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:4px 0 10px}
+.rangebar button{border:0;background:var(--plane);border-radius:8px;padding:7px 0;font-size:13px;min-height:36px;color:var(--ink-2)}
+.rangebar button[aria-pressed=true]{background:var(--accent-strong);color:var(--on-accent);font-weight:600}
+.chead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:2px 0 6px;min-height:46px}
+.chead .big{font-size:22px;font-weight:600}
+.chead .sub{font-size:12px;color:var(--ink-2)}
+.chart{position:relative;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.chart svg{display:block;width:100%;height:260px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;font-size:13px}
+.facts div>span{display:block;font-size:11px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+.facts div b{font-weight:600;font-size:15px}
+table.wt{width:100%;border-collapse:collapse;font-size:14px}
+table.wt th{font-size:11px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em;text-align:right;padding:6px 0;border-bottom:1px solid var(--hair)}
+table.wt th:first-child,table.wt td:first-child{text-align:left}
+table.wt td{text-align:right;padding:9px 0;border-bottom:1px solid var(--hair)}
+table.wt tr:last-child td{border-bottom:0}
+table.wt tr.sel td{color:var(--accent-ink);font-weight:600}
+
+/* more */
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:14px}
+.kv dt{color:var(--ink-2)}.kv dd{margin:0;text-align:right}
+.btn{border:1px solid var(--control);background:transparent;border-radius:10px;padding:10px 14px;min-height:44px;font-size:15px}
+.btn.primary{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--on-accent);font-weight:600}
+.btn.wide{width:100%;margin:0 0 10px}
+.switch{display:flex;justify-content:space-between;align-items:center;min-height:44px;gap:12px}
+.switch input{width:46px;height:28px;accent-color:var(--accent-strong)}
+.note{font-size:13px;color:var(--ink-2)}
+.note p{margin:0 0 8px}
+
+/* tab bar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--tabbar);
+  -webkit-backdrop-filter:saturate(1.6) blur(16px);backdrop-filter:saturate(1.6) blur(16px);
+  border-top:1px solid var(--hair);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--tab-h)}
+nav.tabs button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--muted)}
+nav.tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button[aria-selected=true]{color:var(--accent-ink);font-weight:600}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40;animation:fade .12s}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--panel);border-radius:16px 16px 0 0;
+  max-height:85vh;overflow:auto;padding:8px 16px calc(20px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;animation:fade .12s}
+.grab{width:38px;height:5px;border-radius:3px;background:var(--hair);margin:4px auto 12px}
+.sheet h3{font-size:19px;margin:0 0 2px}
+.sheet .sub{font-size:13px;color:var(--ink-2);margin-bottom:14px}
+
+/* setup */
+.setup{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 20px) 18px 40px}
+.setup h1{font-size:26px;margin:6px 0 10px}
+.setup ol{padding-left:22px}.setup li{margin:8px 0}
+.setup input{width:100%;padding:12px;border:1px solid var(--control);border-radius:10px;background:var(--panel);margin:10px 0 6px;font-size:16px}
+.err{color:var(--down-ink);font-size:13px;min-height:1.3em;margin-bottom:6px}
+.skel{color:var(--muted);padding:30px 0;text-align:center}
+</style>
+</head>
+<body>
+<section id="setup" class="setup hidden" aria-labelledby="setupTitle">
+  <div class="kicker">Net Worth · iPhone</div>
+  <h1 id="setupTitle">Forbind til GitHub</h1>
+  <p>Appen læser din formue fra det private repo <b>nvrkp/net-worth</b>. Den skal bruge en nøgle, der kun kan læse det repo og starte en opdatering. Nøglen gemmes kun på denne telefon.</p>
+  <ol>
+    <li>Tryk <a id="patlink" href="#" target="_blank" rel="noopener">Lav nøgle på GitHub</a> og log ind som <b>nvrkp</b>.</li>
+    <li><b>Repository access</b>: Only select repositories → <b>net-worth</b>.</li>
+    <li><b>Permissions</b>: Actions: <b>Read and write</b>. Contents: <b>Read-only</b>.</li>
+    <li>Udløb: længst muligt. Tryk <b>Generate token</b> og kopiér den.</li>
+    <li>Kom tilbage hertil og indsæt den.</li>
+  </ol>
+  <label for="tok" class="kicker">Nøgle</label>
+  <input id="tok" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="github_pat_…">
+  <div class="err" id="tokerr" role="alert"></div>
+  <button class="btn primary wide" id="tokbtn">Gem og åbn</button>
+  <p class="note" id="setupnote">Åbn siden fra ikonet på hjemmeskærmen, før du indsætter nøglen. Safari og hjemmeskærmsappen gemmer hver for sig.</p>
+</section>
+
+<div id="app" class="hidden">
+  <header id="hdr">
+    <div class="band"></div>
+    <div class="hbar">
+      <div class="htitle"><div class="kicker" id="htitle">Formue</div><div class="htotal" id="htotal"></div></div>
+      <div class="seg" role="group" aria-label="Hvad tæller med">
+        <button id="v-invest" aria-pressed="true">Uden bolig</button>
+        <button id="v-all" aria-pressed="false">Med bolig</button>
+      </div>
+    </div>
+  </header>
+  <main id="main">
+    <div class="ptr" id="ptr" aria-hidden="true"><span id="ptrtxt">Træk for at opdatere</span></div>
+
+    <section class="tab" id="t-home" aria-label="Oversigt">
+      <div class="hero" aria-live="polite">
+        <div class="v" id="total">-</div>
+        <div class="d" id="day"></div>
+      </div>
+      <div class="status"><span class="dot" id="dot"></span><span id="status">Henter …</span></div>
+      <svg class="spark" id="spark" role="img" aria-label="Afkast i år"></svg>
+      <div class="sparkcap"><span>Afkast i år</span><span id="sparkv"></span></div>
+      <div class="tiles" id="tiles"></div>
+      <h2>Fordeling <small id="allocsub"></small></h2>
+      <div class="card"><div class="alloc"><svg id="donut" viewBox="0 0 132 132" role="img" aria-label="Fordeling"></svg><div class="legend" id="legend"></div></div><div id="debt"></div></div>
+      <h2>I dag <small>største bevægelser</small></h2>
+      <div class="card" id="movers"></div>
+      <h2>Konti <small id="nacc"></small></h2>
+      <div id="acclist"></div>
+    </section>
+
+    <section class="tab hidden" id="t-chart" aria-label="Udvikling">
+      <div class="rangebar" id="ranges" role="group" aria-label="Periode"></div>
+      <div class="tools">
+        <div class="seg" role="group" aria-label="Vis">
+          <button id="m-value" aria-pressed="true">Værdi</button>
+          <button id="m-gain" aria-pressed="false">Afkast</button>
+        </div>
+        <span class="mut" id="cmeth" style="font-size:12px"></span>
+      </div>
+      <div class="chead"><div><div class="big" id="cbig">-</div><div class="sub" id="csub"></div></div><div class="sub" id="cdate" style="text-align:right"></div></div>
+      <div class="chart" id="chart"><svg id="csvg" role="img" aria-label="Udvikling"></svg></div>
+      <h2>Perioden</h2>
+      <div class="card"><div class="facts" id="facts"></div></div>
+      <h2>Alle perioder</h2>
+      <div class="card"><table class="wt" id="wtable"></table></div>
+    </section>
+
+    <section class="tab hidden" id="t-hold" aria-label="Beholdning">
+      <input class="search" id="q" type="search" placeholder="Søg navn, ticker eller konto" autocomplete="off" autocorrect="off" aria-label="Søg">
+      <div class="tools">
+        <div class="seg" role="group" aria-label="Gruppér">
+          <button id="g-acc" aria-pressed="true">Konti</button>
+          <button id="g-pos" aria-pressed="false">Positioner</button>
+        </div>
+        <div class="chips" id="sorts" role="group" aria-label="Sortér"></div>
+      </div>
+      <div id="holdings"></div>
+    </section>
+
+    <section class="tab hidden" id="t-more" aria-label="Mere">
+      <h2>Opdatering</h2>
+      <div class="card">
+        <dl class="kv" id="kv"></dl>
+      </div>
+      <button class="btn primary wide" id="refresh">Hent nye kurser nu</button>
+      <h2>Visning</h2>
+      <div class="card">
+        <label class="switch"><span>Skjul beløb<br><span class="mut" style="font-size:12px">Procenter vises stadig</span></span><input type="checkbox" id="hide"></label>
+      </div>
+      <h2>Ejer</h2>
+      <div class="card"><dl class="kv" id="owners"></dl></div>
+      <h2>Om tallene</h2>
+      <div class="card note" id="about"></div>
+      <h2>Telefon</h2>
+      <button class="btn wide" id="logout">Glem nøgle og gemte tal</button>
+      <p class="note" style="text-align:center">Net Worth iPhone · data fra nvrkp/net-worth</p>
+    </section>
+  </main>
+
+  <nav class="tabs" role="tablist" aria-label="Sider">
+    <div class="in">
+      <button role="tab" id="b-home" aria-selected="true" aria-controls="t-home"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg>Oversigt</button>
+      <button role="tab" id="b-chart" aria-selected="false" aria-controls="t-chart"><svg viewBox="0 0 24 24"><path d="M3 19.5h18"/><path d="m4 15 5-5 4 3.5 7-8"/></svg>Udvikling</button>
+      <button role="tab" id="b-hold" aria-selected="false" aria-controls="t-hold"><svg viewBox="0 0 24 24"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>Beholdning</button>
+      <button role="tab" id="b-more" aria-selected="false" aria-controls="t-more"><svg viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg>Mere</button>
+    </div>
+  </nav>
+</div>
+
+<div id="sheetwrap" class="hidden"><div class="scrim" id="scrim"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle"></div></div>
+
+<script>
+"use strict";
+const REPO = "nvrkp/net-worth";
+const API = "https://api.github.com/repos/" + REPO;
+// Prices older than this start a cloud refresh when the app opens: 15 min while
+// Europe or the US trades (weekdays 08:00 to 22:30 Copenhagen time), 2 hours
+// otherwise (only crypto moves). Each run costs about a minute of Actions time.
+const STALE_OPEN_MIN = 15, STALE_SHUT_MIN = 120;
+const POLL_S = 4, POLL_MAX_S = 180;
+const BUCKET_COLOR = {"Bolig":"--s7","Aktier":"--s1","Fonde & ETF":"--s3","Krypto":"--s4","Obligationer":"--s6",
+  "Optioner":"--s5","Derivater P/L":"--s2","Kontant":"--neutral","Gæld":"--down"};
+const TABS = ["home", "chart", "hold", "more"];
+const SORTS = [["value","Værdi"],["day","I dag"],["ytd","I år"],["name","Navn"]];
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("nw." + k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("nw." + k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem("nw." + k); }catch(e){} }
+};
+const S = {
+  data: null, view: null, tab: store.get("tab", "home"), range: store.get("range", "ytd"),
+  mode: store.get("mode", "value"), hide: store.get("hide", false), group: store.get("group", "acc"),
+  sort: store.get("sort", "value"), open: new Set(store.get("open", [])), q: "",
+  busy: false, lastSync: 0, msg: null, scroll: {}
+};
+
+// ---------- formatting: Danish, real minus sign ----------
+const nf0 = new Intl.NumberFormat("da-DK", {maximumFractionDigits: 0});
+const nf1 = new Intl.NumberFormat("da-DK", {minimumFractionDigits: 1, maximumFractionDigits: 1});
+const nf2 = new Intl.NumberFormat("da-DK", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const nfq = new Intl.NumberFormat("da-DK", {maximumFractionDigits: 4});
+const MASK = "••••";
+const num = x => typeof x === "number" && isFinite(x);
+function sgn(x, signed){ return x < 0 ? "−" : (signed && x > 0 ? "+" : ""); }
+function kr(x, signed, force){
+  if (S.hide && !force) return MASK;
+  if (!num(x)) return "-";
+  const r = Math.round(x); return sgn(r, signed) + nf0.format(Math.abs(r)) + " kr";
+}
+function krShort(x){
+  if (S.hide) return "";
+  if (!num(x)) return "";
+  const a = Math.abs(x);
+  if (a >= 1e6) return sgn(x) + nf1.format(a / 1e6) + " mio.";
+  if (a >= 1e4) return sgn(x) + nf0.format(a / 1e3) + "k";
+  return sgn(x) + nf0.format(a);
+}
+function pct(x, dec){
+  if (!num(x)) return "-";
+  const f = dec === 1 ? nf1 : nf2;
+  const r = Number(f.format(Math.abs(x)).replace(/\./g, "").replace(",", "."));
+  return (r === 0 ? "" : (x < 0 ? "−" : "+")) + f.format(Math.abs(x)) + " %";
+}
+const cls = x => !num(x) || Math.abs(x) < 1e-9 ? "" : (x > 0 ? "up" : "down");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const MONTHS = ["jan.","feb.","mar.","apr.","maj","jun.","jul.","aug.","sep.","okt.","nov.","dec."];
+function dateLabel(iso, short){
+  if (!iso) return "-";
+  const d = new Date(iso.slice(0, 10) + "T12:00:00"); if (isNaN(d)) return iso;
+  return d.getDate() + ". " + MONTHS[d.getMonth()] + (short ? "" : " " + d.getFullYear());
+}
+function whenLabel(iso){
+  if (!iso) return "ukendt tid";
+  const d = new Date(iso); if (isNaN(d)) return iso;
+  const now = new Date(), day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(now) - day(d)) / 864e5);
+  const hm = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  if (diff === 0) return "i dag kl. " + hm;
+  if (diff === 1) return "i går kl. " + hm;
+  return d.getDate() + ". " + MONTHS[d.getMonth()] + " kl. " + hm;
+}
+const sp = (x, dec, star) => '<span class="' + cls(x) + '">' + esc(pct(x, dec)) + (star ? "*" : "") + "</span>";
+const sk = (x, signed) => '<span class="' + cls(x) + '">' + esc(kr(x, signed)) + "</span>";
+
+// ---------- GitHub ----------
+const token = () => store.get("token", "");
+async function gh(path, opts = {}){
+  return fetch(API + path, Object.assign({}, opts, {cache: "no-store", headers: Object.assign({
+    "Authorization": "Bearer " + token(), "X-GitHub-Api-Version": "2022-11-28"}, opts.headers || {})}));
+}
+async function readView(branch){
+  let r;
+  try{ r = await gh("/contents/view.json?ref=" + branch + "&t=" + Date.now(), {headers: {"Accept": "application/vnd.github.raw+json"}}); }
+  catch(e){ return null; }
+  if (r.status === 401) throw new Error("auth");
+  if (!r.ok) return null;
+  try{ const v = await r.json(); return v && v.views ? v : null; }catch(e){ return null; }
+}
+const priceTime = v => v && v.prices_at ? (Date.parse(v.prices_at) || 0) : 0;
+const snapTime = v => v && v.mac_snapshot ? (Date.parse(v.mac_snapshot) || 0) : 0;
+// The newer prices win, unless the other view is built on a newer Mac
+// snapshot (a trade just saved) and its prices are at most 30 min older.
+function newest(a, b){
+  if (!a) return b || null; if (!b) return a;
+  const pa = priceTime(a), pb = priceTime(b), sa = snapTime(a), sb = snapTime(b);
+  if (sb > sa + 60e3 && pb >= pa - 30 * 60e3) return b;
+  if (sa > sb + 60e3 && pa >= pb - 30 * 60e3) return a;
+  return pb > pa ? b : a;
+}
+function staleLimit(){
+  const p = {}; new Intl.DateTimeFormat("en-GB", {timeZone: "Europe/Copenhagen", weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23"})
+    .formatToParts(new Date()).forEach(x => p[x.type] = x.value);
+  const m = (+p.hour) * 60 + (+p.minute), wd = !["Sat", "Sun"].includes(p.weekday);
+  return (wd && m >= 8 * 60 && m <= 22 * 60 + 30) ? STALE_OPEN_MIN : STALE_SHUT_MIN;
+}
+async function dispatch(){
+  const r = await gh("/actions/workflows/refresh.yml/dispatches", {method: "POST",
+    headers: {"Accept": "application/vnd.github+json", "Content-Type": "application/json"}, body: JSON.stringify({ref: "main"})});
+  if (r.status === 401) throw new Error("auth");
+  if (r.status === 403 || r.status === 404) throw new Error("perm");
+  if (!r.ok) throw new Error("dispatch " + r.status);
+  store.set("dispatched", Date.now());
+}
+async function lastRun(){
+  try{
+    const r = await gh("/actions/workflows/refresh.yml/runs?per_page=1", {headers: {"Accept": "application/vnd.github+json"}});
+    if (!r.ok) return null; const j = await r.json(); return (j.workflow_runs || [])[0] || null;
+  }catch(e){ return null; }
+}
+
+// ---------- sync ----------
+function setStatus(msg, mode){ S.msg = msg ? {msg, mode} : null; renderStatus(); }
+function describe(){
+  const v = S.data; if (!v) return "Ingen data endnu";
+  let s = "Kurser " + whenLabel(v.prices_at) + " · " + (v.source === "cloud" ? "GitHub" : "Mac");
+  const n = (V() || {}).n_stale; if (n) s += " · " + n + " uden frisk kurs";
+  return s;
+}
+function renderStatus(){
+  const m = S.msg, age = (Date.now() - priceTime(S.data)) / 36e5;
+  $("status").textContent = m ? m.msg : describe();
+  $("dot").className = "dot" + (m && m.mode ? " " + m.mode : ((V() || {}).n_stale ? " warn" : (age > 30 ? " old" : "")));
+  renderMore();
+}
+async function sync(userAsked){
+  if (S.busy || !token()) return;
+  S.busy = true; S.lastSync = Date.now();
+  try{
+    setStatus("Henter …", "busy");
+    const [mac, live] = await Promise.all([readView("mac"), readView("live")]);
+    const v = newest(newest(mac, live), S.data);
+    if (v && v !== S.data){ S.data = v; store.set("data", v); render(); }
+    const age = (Date.now() - priceTime(S.data)) / 60e3;
+    const recent = Date.now() - store.get("dispatched", 0) < 3 * 60e3;
+    if (userAsked || (age > staleLimit() && !recent)){
+      setStatus("Henter nye kurser i skyen …", "busy");
+      const t0 = Date.now();
+      await dispatch();
+      await poll(t0);
+    } else setStatus(null);
+  }catch(e){
+    if (e.message === "auth"){ setStatus("Nøglen blev afvist", "warn"); showSetup("GitHub afviste nøglen (udløbet eller slettet). Lav en ny."); }
+    else if (e.message === "perm") setStatus("Nøglen kan læse, men ikke starte en opdatering. Giv den Actions: Read and write.", "warn");
+    else if (e.message.startsWith("dispatch")) setStatus(describe() + " · GitHub afviste opdateringen (" + e.message.slice(9) + ")", "warn");
+    else setStatus(describe() + " · ingen forbindelse", "warn");
+  }finally{ S.busy = false; }
+}
+async function poll(t0){
+  for (let waited = 0; waited <= POLL_MAX_S; waited += POLL_S){
+    await new Promise(r => setTimeout(r, POLL_S * 1000));
+    const live = await readView("live");
+    // the cloud stamps prices_at with its own clock; allow 60 s of skew
+    if (live && priceTime(live) >= t0 - 60e3){
+      S.data = newest(S.data, live); store.set("data", S.data); render(); setStatus(null); return true;
+    }
+    if (waited >= 24 && waited % 12 === 0){
+      const run = await lastRun();
+      if (run && run.status === "completed" && run.conclusion !== "success" && Date.parse(run.created_at) >= t0 - 60e3){
+        setStatus(describe() + " · skyen fik ingen kurser", "warn"); return false;
+      }
+    }
+  }
+  setStatus(describe() + " · skyen svarede ikke", "warn"); return false;
+}
+
+// ---------- helpers ----------
+function V(){ const d = S.data; if (!d) return null; return d.views[S.view] || d.views[d.default_view] || null; }
+function win(key){ const v = V(); return v && (v.windows.find(w => w.key === key) || v.windows.find(w => w.key === "ytd")); }
+function allPositions(){ const v = V(); return v ? v.accounts.flatMap(a => a.positions.map(p => Object.assign({account: a.name}, p))) : []; }
+function svgEl(svg, w, h){ svg.setAttribute("viewBox", "0 0 " + w + " " + h); svg.setAttribute("preserveAspectRatio", "none"); }
+
+// ---------- render ----------
+function render(){
+  const d = S.data; if (!d) return;
+  if (!S.view || !d.views[S.view]) S.view = store.get("view", d.default_view || "invest");
+  if (!d.views[S.view]) S.view = d.default_view || "invest";
+  $("v-invest").setAttribute("aria-pressed", S.view === "invest");
+  $("v-all").setAttribute("aria-pressed", S.view === "all");
+  const v = V(); if (!v) return;
+  $("htotal").textContent = kr(v.total);
+  renderHome(); renderChart(); renderHold(); renderStatus();
+}
+function renderHome(){
+  const v = V();
+  $("total").textContent = kr(v.total);
+  $("day").innerHTML = sk(v.day[0], true) + " (" + sp(v.day[1]) + ') <span class="mut">i dag</span>';
+  // sparkline: this year's gain (money in and out removed), zero line dashed
+  const w = win("ytd"), pts = (w && w.series) || [], svg = $("spark");
+  const W = 340, H = 58;
+  svgEl(svg, W, H);
+  $("sparkv").innerHTML = w ? sk(w.gain, true) + " · " + sp(w.pct, 1, v.method_forced) : "";
+  if (pts.length > 1){
+    const vals = pts.map(p => p[2]), lo = Math.min(0, ...vals), hi = Math.max(0, ...vals), rg = (hi - lo) || 1;
+    const X = i => i / (pts.length - 1) * W, Y = y => 3 + (hi - y) / rg * (H - 6), z = Y(0).toFixed(1);
+    const line = pts.map((p, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(p[2]).toFixed(1)).join("");
+    const area = line + "L" + W + " " + z + "L0 " + z + "Z";
+    svg.innerHTML = '<defs><clipPath id="su"><rect width="' + W + '" height="' + z + '"/></clipPath><clipPath id="sd"><rect y="' + z + '" width="' + W + '" height="' + H + '"/></clipPath></defs>' +
+      '<line x1="0" x2="' + W + '" y1="' + z + '" y2="' + z + '" stroke="var(--neutral)" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>' +
+      '<path d="' + area + '" fill="var(--up)" opacity=".12" clip-path="url(#su)"/><path d="' + area + '" fill="var(--down)" opacity=".12" clip-path="url(#sd)"/>' +
+      '<path d="' + line + '" fill="none" stroke="var(--up)" stroke-width="1.8" vector-effect="non-scaling-stroke" clip-path="url(#su)"/>' +
+      '<path d="' + line + '" fill="none" stroke="var(--down)" stroke-width="1.8" vector-effect="non-scaling-stroke" clip-path="url(#sd)"/>';
+  } else svg.innerHTML = "";
+  svg.onclick = () => { S.range = "ytd"; S.mode = "gain"; store.set("range", "ytd"); store.set("mode", "gain"); go("chart"); };
+  // tiles
+  const star = v.method_forced ? "*" : "";
+  const tile = (label, p, g, key) => '<button class="tile" data-range="' + (key || "") + '"><div class="l">' + label + '</div><div class="p">' +
+    sp(p, key ? 1 : 2, key ? star : "") + '</div><div class="g">' + sk(g, true) + "</div></button>";
+  $("tiles").innerHTML = tile("I dag", v.day[1], v.day[0], "") + ["ytd", "1y", "max"].map(k => { const x = win(k); return tile(x.label, x.pct, x.gain, k); }).join("");
+  $("tiles").querySelectorAll("button[data-range]").forEach(b => b.onclick = () => { if (b.dataset.range){ S.range = b.dataset.range; store.set("range", S.range); } go("chart"); });
+  // donut
+  const pos = v.buckets.filter(b => b.value > 0), neg = v.buckets.filter(b => b.value < 0);
+  const sum = pos.reduce((a, b) => a + b.value, 0) || 1;
+  const R = 52, C = 2 * Math.PI * R; let off = 0;
+  $("donut").innerHTML = '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="var(--plane)" stroke-width="16"/>' +
+    pos.map(b => { const len = b.value / sum * C, gap = pos.length > 1 ? Math.min(2, len / 3) : 0;
+      const s = '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="var(' + (BUCKET_COLOR[b.name] || "--neutral") + ')" stroke-width="16" stroke-dasharray="' +
+        Math.max(len - gap, 0.01).toFixed(2) + " " + C.toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '" transform="rotate(-90 66 66)"/>';
+      off += len; return s; }).join("") +
+    '<text x="66" y="62" text-anchor="middle" font-size="10" fill="var(--ink-2)">Aktiver</text><text x="66" y="78" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)">' +
+    esc(S.hide ? MASK : krShort(sum)) + "</text>";
+  $("allocsub").textContent = pos.length + (pos.length === 1 ? " klasse" : " klasser");
+  $("legend").innerHTML = pos.map(b => '<div class="li"><i class="sw" style="background:var(' + (BUCKET_COLOR[b.name] || "--neutral") + ')"></i><span>' + esc(b.name) +
+    '</span><b>' + esc(nf1.format(b.value / sum * 100)) + ' %</b><span class="amt">' + esc(kr(b.value)) + "</span></div>").join("");
+  $("debt").innerHTML = neg.map(b => '<div class="debt"><span>' + esc(b.name) + '</span><span class="down">' + esc(kr(b.value)) + "</span></div>").join("");
+  // movers
+  const ps = allPositions().filter(p => num(p.day[0]) && Math.abs(p.day[0]) >= 1 && p.type !== "cash");
+  const ups = ps.filter(p => p.day[0] > 0).sort((a, b) => b.day[0] - a.day[0]).slice(0, 3);
+  const dns = ps.filter(p => p.day[0] < 0).sort((a, b) => a.day[0] - b.day[0]).slice(0, 3);
+  const mx = Math.max(1, ...ups.concat(dns).map(p => Math.abs(p.day[0])));
+  const mrow = p => '<button class="mover pos" data-k="' + esc(p.account + "|" + p.name) + '" style="border-left:0;padding:8px 0"><span class="n">' + esc(p.name) +
+    '</span><span>' + sk(p.day[0], true) + " " + sp(p.day[1]) + '</span><span class="mbar"><i style="width:' + (Math.abs(p.day[0]) / mx * 100).toFixed(1) +
+    "%;background:var(" + (p.day[0] > 0 ? "--up" : "--down") + ')"></i></span></button>';
+  $("movers").innerHTML = (ups.length || dns.length) ? ups.concat(dns).map(mrow).join("") : '<div class="mut">Ingen kursbevægelser endnu i dag.</div>';
+  $("movers").querySelectorAll("[data-k]").forEach(b => b.onclick = () => openPos(b.dataset.k));
+  // accounts summary
+  $("nacc").textContent = v.accounts.length + " konti · " + v.n_positions + " positioner";
+  $("acclist").innerHTML = v.accounts.map(a => '<div class="acc"><button class="head" data-acc="' + esc(a.name) + '"><div class="row1"><span class="n">' + esc(a.name) +
+    '</span><span class="val">' + esc(kr(a.value)) + '</span></div><div class="row2"><span>' + (num(a.share) ? esc(nf1.format(a.share)) + " % af formuen" : "") +
+    "</span><span>" + sp(a.day[1]) + " i dag · " + sp(a.ytd[1], 1, a.ytd_star) + ' i år</span></div><div class="share"><i style="width:' +
+    Math.max(0, Math.min(100, a.share || 0)).toFixed(1) + '%"></i></div></button></div>').join("");
+  $("acclist").querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { S.group = "acc"; S.open.add(b.dataset.acc); saveOpen(); go("hold");
+    requestAnimationFrame(() => { const el = document.querySelector('#holdings [data-acc="' + CSS.escape(b.dataset.acc) + '"]'); if (el) el.scrollIntoView({block: "start"}); window.scrollBy(0, -70); }); });
+}
+
+// ---------- chart screen ----------
+let chartState = null;
+function renderChart(){
+  const v = V(); if (!v) return;
+  const box = $("ranges"); box.innerHTML = "";
+  v.windows.forEach(w => { const b = document.createElement("button"); b.textContent = w.label; b.setAttribute("aria-pressed", w.key === S.range);
+    b.onclick = () => { S.range = w.key; store.set("range", w.key); renderChart(); }; box.appendChild(b); });
+  $("m-value").setAttribute("aria-pressed", S.mode === "value"); $("m-gain").setAttribute("aria-pressed", S.mode === "gain");
+  const w = win(S.range), pts = w.series || [], star = v.method_forced ? "*" : "";
+  $("cmeth").textContent = (v.method === "mwr" ? "Pengevægtet" : "Tidsvægtet") + (star ? "*" : "");
+  setChartHead(null, w, star);
+  drawChart(pts);
+  // facts for the range
+  const start = pts.length ? pts[0][1] : null, end = pts.length ? pts[pts.length - 1][1] : v.total;
+  const flows = num(start) && num(end) && num(w.gain) ? end - start - w.gain : null;
+  $("facts").innerHTML = [["Start", kr(start)], ["Nu", kr(end)], ["Afkast", sk(w.gain, true), 1], ["Afkast %", sp(w.pct, 1, star), 1],
+    ["Penge ind/ud", kr(flows, true)], ["Fra", dateLabel(pts.length ? pts[0][0] : w.since)]]
+    .map(f => "<div><span>" + f[0] + "</span><b>" + (f[2] ? f[1] : esc(f[1])) + "</b></div>").join("");
+  $("wtable").innerHTML = "<tr><th>Periode</th><th>Afkast</th><th>%</th></tr>" + v.windows.map(x => '<tr class="' + (x.key === S.range ? "sel" : "") +
+    '" data-r="' + x.key + '"><td>' + esc(x.label) + "</td><td>" + sk(x.gain, true) + "</td><td>" + sp(x.pct, 1, star) + "</td></tr>").join("");
+  $("wtable").querySelectorAll("tr[data-r]").forEach(tr => tr.onclick = () => { S.range = tr.dataset.r; store.set("range", S.range); renderChart(); window.scrollTo(0, 0); });
+}
+function setChartHead(p, w, star){
+  if (p){
+    $("cbig").innerHTML = S.mode === "value" ? esc(kr(p[1])) : sk(p[2], true);
+    $("csub").textContent = S.mode === "value" ? "Værdi" : "Afkast siden start af perioden";
+    $("cdate").textContent = dateLabel(p[0]);
+  } else {
+    $("cbig").innerHTML = S.mode === "value" ? esc(kr(V().total)) : sk(w.gain, true);
+    $("csub").innerHTML = S.mode === "value" ? sk(w.gain, true) + " " + sp(w.pct, 1, star) + " i perioden" : sp(w.pct, 1, star) + " i perioden";
+    $("cdate").textContent = w.since ? "Siden " + dateLabel(w.since) : "Siden start";
+  }
+}
+function niceTicks(lo, hi, n){
+  const span = hi - lo || 1, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw) || raw;
+  const out = []; for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) out.push(t); return out;
+}
+function drawChart(pts){
+  const svg = $("csvg"), W = Math.max(svg.clientWidth || 340, 200), H = 260, L = 2, Rr = 48, T = 12, B = 24;
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.removeAttribute("preserveAspectRatio");
+  if (pts.length < 2){ svg.innerHTML = '<text x="' + W / 2 + '" y="' + H / 2 + '" text-anchor="middle" font-size="13" fill="var(--muted)">Ingen historik i perioden</text>'; chartState = null; return; }
+  const col = S.mode === "value" ? 1 : 2;
+  const t = pts.map(p => Date.parse(p[0] + "T12:00:00")), y = pts.map(p => p[col]);
+  let lo = Math.min(...y), hi = Math.max(...y);
+  if (S.mode === "gain"){ lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+  if (hi - lo < 1){ hi += 1; lo -= 1; }
+  const pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+  const X = x => L + (x - t[0]) / ((t[t.length - 1] - t[0]) || 1) * (W - L - Rr);
+  const Y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  let path = ""; pts.forEach((p, i) => { path += (i ? "L" : "M") + X(t[i]).toFixed(1) + " " + Y(y[i]).toFixed(1); });
+  const ticks = niceTicks(lo, hi, 4);
+  let g = ticks.map(v => '<line x1="' + L + '" x2="' + (W - Rr) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="var(--grid)" stroke-width="0.7"/>' +
+    (S.hide ? "" : '<text x="' + (W - Rr + 6) + '" y="' + (Y(v) + 4).toFixed(1) + '" font-size="11" fill="var(--muted)">' + esc(krShort(v) || "0") + "</text>")).join("");
+  // x labels: start, middle, end
+  const xl = [0, Math.floor(pts.length / 2), pts.length - 1].map((i, k) => '<text x="' + X(t[i]).toFixed(1) + '" y="' + (H - 6) + '" font-size="11" fill="var(--muted)" text-anchor="' +
+    ["start", "middle", "end"][k] + '">' + esc(dateLabel(pts[i][0], (t[t.length - 1] - t[0]) < 300 * 864e5)) + "</text>").join("");
+  let body;
+  if (S.mode === "gain"){
+    const z = Y(0).toFixed(1), area = path + "L" + X(t[t.length - 1]).toFixed(1) + " " + z + "L" + X(t[0]).toFixed(1) + " " + z + "Z";
+    body = '<defs><clipPath id="cu"><rect x="0" y="0" width="' + W + '" height="' + z + '"/></clipPath><clipPath id="cd"><rect x="0" y="' + z + '" width="' + W + '" height="' + (H - z) + '"/></clipPath></defs>' +
+      '<line x1="' + L + '" x2="' + (W - Rr) + '" y1="' + z + '" y2="' + z + '" stroke="var(--neutral)" stroke-width="1"/>' +
+      '<path d="' + area + '" fill="var(--up)" opacity=".14" clip-path="url(#cu)"/><path d="' + area + '" fill="var(--down)" opacity=".14" clip-path="url(#cd)"/>' +
+      '<path d="' + path + '" fill="none" stroke="var(--up)" stroke-width="2" stroke-linejoin="round" clip-path="url(#cu)"/>' +
+      '<path d="' + path + '" fill="none" stroke="var(--down)" stroke-width="2" stroke-linejoin="round" clip-path="url(#cd)"/>';
+  } else {
+    const base = (H - B).toFixed(1), area = path + "L" + X(t[t.length - 1]).toFixed(1) + " " + base + "L" + X(t[0]).toFixed(1) + " " + base + "Z";
+    body = '<defs><linearGradient id="fillg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".22"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>' +
+      (lo < 0 && hi > 0 ? '<line x1="' + L + '" x2="' + (W - Rr) + '" y1="' + Y(0) + '" y2="' + Y(0) + '" stroke="var(--neutral)"/>' : "") +
+      '<path d="' + area + '" fill="url(#fillg)"/><path d="' + path + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>';
+  }
+  svg.innerHTML = g + xl + body +
+    '<line id="cl" y1="' + T + '" y2="' + (H - B) + '" stroke="var(--control)" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>' +
+    '<circle id="cc" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2" style="display:none"/>';
+  chartState = {pts, t, y, X, Y, W};
+}
+function scrub(ev){
+  if (!chartState) return;
+  const svg = $("csvg"), r = svg.getBoundingClientRect(), cs = chartState;
+  const cx = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left) * cs.W / r.width;
+  let i = 0, best = Infinity; cs.t.forEach((x, j) => { const dd = Math.abs(cs.X(x) - cx); if (dd < best){ best = dd; i = j; } });
+  const c = svg.querySelector("#cc"), l = svg.querySelector("#cl");
+  c.setAttribute("cx", cs.X(cs.t[i])); c.setAttribute("cy", cs.Y(cs.y[i])); c.style.display = "";
+  l.setAttribute("x1", cs.X(cs.t[i])); l.setAttribute("x2", cs.X(cs.t[i])); l.style.display = "";
+  setChartHead(cs.pts[i]);
+}
+function unscrub(){
+  const svg = $("csvg"), c = svg.querySelector("#cc"), l = svg.querySelector("#cl");
+  if (c){ c.style.display = "none"; l.style.display = "none"; }
+  const v = V(); if (v) setChartHead(null, win(S.range), v.method_forced ? "*" : "");
+}
+
+// ---------- holdings ----------
+function sortKey(p){
+  if (S.sort === "day") return -(p.day[1] ?? -1e9);
+  if (S.sort === "ytd") return -(p.ytd[1] ?? -1e9);
+  if (S.sort === "name") return 0;
+  return -Math.abs(p.value || 0);
+}
+function sorted(list){
+  const l = list.slice();
+  if (S.sort === "name") l.sort((a, b) => String(a.name).localeCompare(String(b.name), "da"));
+  else l.sort((a, b) => sortKey(a) - sortKey(b));
+  return l;
+}
+function posRow(p, showAcc){
+  return '<button class="pos" data-k="' + esc(p.account + "|" + p.name) + '"><div class="row1"><span class="n">' + esc(p.name) +
+    (p.stale ? ' <span class="warn" aria-label="ingen frisk kurs">⚠</span>' : "") + '</span><span class="val">' + esc(kr(p.value)) +
+    '</span></div><div class="row2"><span>' + esc([showAcc ? p.account : p.ticker, p.bucket].filter(Boolean).join(" · ")) + "</span><span>" +
+    sp(p.day[1]) + " · " + sp(p.ytd[1], 1, p.ytd_star) + " i år</span></div></button>";
+}
+function renderHold(){
+  const v = V(); if (!v) return;
+  $("g-acc").setAttribute("aria-pressed", S.group === "acc"); $("g-pos").setAttribute("aria-pressed", S.group === "pos");
+  $("sorts").innerHTML = SORTS.map(s => '<button class="chip" data-s="' + s[0] + '" aria-pressed="' + (S.sort === s[0]) + '">' + s[1] + "</button>").join("");
+  $("sorts").querySelectorAll("[data-s]").forEach(b => b.onclick = () => { S.sort = b.dataset.s; store.set("sort", S.sort); renderHold(); });
+  const q = S.q.trim().toLowerCase();
+  const hit = p => !q || [p.name, p.ticker, p.account, p.bucket].some(x => String(x || "").toLowerCase().includes(q));
+  let html = "";
+  if (S.group === "pos"){
+    const ps = sorted(allPositions().filter(hit));
+    html = ps.length ? '<div class="acc">' + ps.map(p => posRow(p, true)).join("") + "</div>" : '<p class="mut">Ingen positioner matcher.</p>';
+  } else {
+    const accs = v.accounts.map(a => ({a, ps: a.positions.map(p => Object.assign({account: a.name}, p)).filter(hit)})).filter(x => x.ps.length || (!q));
+    html = accs.map(({a, ps}) => { const open = S.open.has(a.name) || !!q;
+      return '<div class="acc' + (open ? " open" : "") + '"><button class="head" data-acc="' + esc(a.name) + '" aria-expanded="' + open + '"><div class="row1"><span class="n">' + esc(a.name) +
+        '<span class="chev">›</span></span><span class="val">' + esc(kr(a.value)) + '</span></div><div class="row2"><span>' + a.positions.length + (a.positions.length === 1 ? " position" : " positioner") +
+        (num(a.share) ? " · " + esc(nf1.format(a.share)) + " %" : "") + "</span><span>" + sk(a.day[0], true) + " i dag · " + sp(a.ytd[1], 1, a.ytd_star) + " i år</span></div></button>" +
+        (open ? sorted(ps).map(p => posRow(p, false)).join("") : "") + "</div>"; }).join("") || '<p class="mut">Ingen positioner matcher.</p>';
+  }
+  $("holdings").innerHTML = html;
+  $("holdings").querySelectorAll("button.head[data-acc]").forEach(b => b.onclick = () => { const n = b.dataset.acc; S.open.has(n) ? S.open.delete(n) : S.open.add(n); saveOpen(); renderHold(); });
+  $("holdings").querySelectorAll("button.pos[data-k]").forEach(b => b.onclick = () => openPos(b.dataset.k));
+}
+function saveOpen(){ store.set("open", Array.from(S.open)); }
+
+// ---------- position sheet ----------
+let lastFocus = null;
+function openPos(k){
+  const p = allPositions().find(x => x.account + "|" + x.name === k); if (!p) return;
+  const qty = S.hide ? MASK : (num(p.qty) ? nfq.format(p.qty) : "-");
+  const px = num(p.price) ? nfq.format(p.price) + " " + (p.ccy || "") : "-";
+  const cost = num(p.cost_price) && p.cost_price ? nfq.format(p.cost_price) + " " + (p.ccy || "") : "-";
+  const rows = [["Værdi", esc(kr(p.value))], ["Andel af formuen", num(p.share) ? esc(nf1.format(p.share)) + " %" : "-"],
+    ["I dag", sk(p.day[0], true) + " " + sp(p.day[1])], ["I år", sk(p.ytd[0], true) + " " + sp(p.ytd[1], 1, p.ytd_star)],
+    ["Siden køb", sk(p.total[0], true) + " " + sp(p.total[1], 1)], ["Antal", esc(qty) + (p.mult && p.mult !== 1 ? " × " + esc(nfq.format(p.mult)) : "")],
+    ["Kurs", esc(px)], ["Købskurs", esc(cost)], ["Retning", p.short ? "Short" : "Long"], ["Købt", esc(p.bought ? dateLabel(p.bought) : "-")],
+    ["Konto", esc(p.account)], ["Ejer", esc(p.owner)]];
+  $("sheet").innerHTML = '<div class="grab"></div><h3 id="shTitle">' + esc(p.name) + '</h3><div class="sub">' + esc([p.ticker, p.bucket].filter(Boolean).join(" · ")) +
+    (p.stale ? ' · <span class="warn">ingen frisk kurs</span>' : "") + (p.fx_missing ? ' · <span class="warn">mangler valutakurs</span>' : "") + "</div>" +
+    '<dl class="kv">' + rows.map(r => "<dt>" + r[0] + "</dt><dd>" + r[1] + "</dd>").join("") + "</dl>" +
+    '<button class="btn wide" id="shclose" style="margin-top:18px">Luk</button>';
+  lastFocus = document.activeElement;
+  $("sheetwrap").classList.remove("hidden"); $("shclose").onclick = closeSheet; $("shclose").focus();
+}
+function closeSheet(){ $("sheetwrap").classList.add("hidden"); if (lastFocus) lastFocus.focus(); }
+$("scrim").onclick = closeSheet;
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+(function(){ let y0 = null; const sh = $("sheet");
+  sh.addEventListener("touchstart", e => { y0 = sh.scrollTop <= 0 ? e.touches[0].clientY : null; }, {passive: true});
+  sh.addEventListener("touchend", e => { if (y0 !== null && e.changedTouches[0].clientY - y0 > 80) closeSheet(); y0 = null; }, {passive: true}); })();
+
+// ---------- more ----------
+function renderMore(){
+  const d = S.data, v = V(); if (!d || !v) return;
+  const age = (Date.now() - priceTime(d)) / 60e3;
+  $("kv").innerHTML = [["Kurser", whenLabel(d.prices_at)], ["Kilde", d.source === "cloud" ? "GitHub (skyen)" : "Mac'en"],
+    ["Historik til", dateLabel(d.history_end)], ["Mac-data fra", whenLabel(d.mac_snapshot || d.made_at)],
+    ["Uden frisk kurs", String(v.n_stale || 0)], ["Næste opdatering", age > staleLimit() ? "ved næste åbning" : "ved åbning efter " + (staleLimit() >= 60 ? staleLimit() / 60 + " timer" : staleLimit() + " min.")]]
+    .map(r => "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>").join("");
+  $("owners").innerHTML = Object.entries(v.owners || {}).map(([k, x]) => "<dt>" + esc(k.charAt(0).toUpperCase() + k.slice(1)) + "</dt><dd>" + esc(kr(x)) + "</dd>").join("") ||
+    "<dt>-</dt><dd></dd>";
+  $("about").innerHTML = "<p><b>Samme tal som Mac-appen.</b> Telefonen viser de tal, Net Worth regner ud: værdi i kroner, i dag fra sidste lukkekurs og afkast med penge ind og ud trukket fra.</p>" +
+    "<p><b>Uden bolig</b> skjuler lejligheden og al gæld, ligesom «Bolig & gæld» i appen. <b>Med bolig</b> tæller det hele med; så er tallene gearede.</p>" +
+    "<p><b>Metode: " + (v.method === "mwr" ? "pengevægtet" : "tidsvægtet") + ".</b> Tal med * er pengevægtede, fordi kontant og gæld kun har en saldo på kontoudtogsdage.</p>" +
+    "<p><b>Opdatering.</b> Mac'en sender tal efter hver opdatering. GitHub henter nye kurser kl. 22.15 hver aften og når du åbner appen med kurser over " + STALE_OPEN_MIN + " minutter gamle (hverdage 8 til 22.30), ellers over to timer gamle. Træk ned for at hente nu.</p>";
+}
+
+// ---------- navigation ----------
+function go(tab){
+  if (!TABS.includes(tab)) tab = "home";
+  S.scroll[S.tab] = window.scrollY;
+  S.tab = tab; store.set("tab", tab);
+  TABS.forEach(k => { $("t-" + k).classList.toggle("hidden", k !== tab); $("b-" + k).setAttribute("aria-selected", k === tab); });
+  $("htitle").textContent = {home: "Formue", chart: "Udvikling", hold: "Beholdning", more: "Mere"}[tab];
+  if (tab === "chart") renderChart();
+  if (tab === "hold") renderHold();
+  window.scrollTo(0, S.scroll[tab] || 0); onScroll();
+  if (history.replaceState) history.replaceState(null, "", "#" + tab);
+}
+TABS.forEach(k => $("b-" + k).onclick = () => { if (S.tab === k) window.scrollTo({top: 0, behavior: "smooth"}); else go(k); });
+function onScroll(){ $("hdr").classList.toggle("scrolled", window.scrollY > 70 || S.tab !== "home"); }
+window.addEventListener("scroll", onScroll, {passive: true});
+
+// pull to refresh (the home-screen app has no reload button)
+(function(){
+  let y0 = null, dy = 0; const ptr = $("ptr"), txt = $("ptrtxt");
+  document.addEventListener("touchstart", e => { if (window.scrollY <= 0 && !e.target.closest(".chart,.sheet") && $("sheetwrap").classList.contains("hidden")) y0 = e.touches[0].clientY; else y0 = null; dy = 0; }, {passive: true});
+  document.addEventListener("touchmove", e => { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0);
+    ptr.style.height = Math.min(dy * 0.5, 56) + "px"; txt.textContent = dy > 110 ? "Slip for at hente nye kurser" : "Træk for at opdatere"; }, {passive: true});
+  document.addEventListener("touchend", () => { if (y0 !== null && dy > 110) sync(true); y0 = null; dy = 0; ptr.style.height = "0"; }, {passive: true});
+})();
+
+// ---------- setup ----------
+function showSetup(msg){
+  $("app").classList.add("hidden"); $("setup").classList.remove("hidden");
+  $("tokerr").textContent = msg || "";
+  const standalone = window.navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  $("setupnote").innerHTML = standalone ? "Nøglen gemmes kun i denne app på telefonen." :
+    "Du er i Safari. Tilføj først siden til hjemmeskærmen (Del-knappen → <b>Føj til hjemmeskærm</b>), åbn ikonet og indsæt nøglen dér. Safari og hjemmeskærmsappen gemmer hver for sig.";
+}
+async function saveToken(){
+  const t = $("tok").value.trim();
+  if (!t){ $("tokerr").textContent = "Indsæt nøglen først."; return; }
+  if (!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(t)){ $("tokerr").textContent = "Det ligner ikke en GitHub-nøgle. Den starter med github_pat_."; return; }
+  $("tokerr").textContent = "Tjekker …";
+  try{
+    const r = await fetch(API, {cache: "no-store", headers: {"Authorization": "Bearer " + t}});
+    if (!r.ok){ $("tokerr").textContent = (r.status === 404 || r.status === 401) ? "Nøglen kan ikke se nvrkp/net-worth. Tjek repo og rettigheder." : "GitHub svarede " + r.status + "."; return; }
+  }catch(e){ $("tokerr").textContent = "Ingen forbindelse til GitHub."; return; }
+  store.set("token", t); $("tok").value = ""; start();
+}
+function start(){
+  $("setup").classList.add("hidden"); $("app").classList.remove("hidden");
+  S.data = store.get("data", null);
+  const h = (location.hash || "").slice(1);
+  go(TABS.includes(h) ? h : S.tab);
+  if (S.data) render(); else $("total").textContent = "Henter …";
+  sync(false);
+}
+$("patlink").href = "https://github.com/settings/personal-access-tokens/new?name=" + encodeURIComponent("Net Worth iPhone") +
+  "&description=" + encodeURIComponent("Læser nvrkp/net-worth og starter opdateringen") + "&target_name=nvrkp&expires_in=366&contents=read&actions=write";
+$("tokbtn").onclick = saveToken;
+$("tok").addEventListener("keydown", e => { if (e.key === "Enter") saveToken(); });
+$("refresh").onclick = () => sync(true);
+$("hide").checked = S.hide;
+$("hide").onchange = () => { S.hide = $("hide").checked; store.set("hide", S.hide); render(); };
+$("logout").onclick = () => { if (confirm("Glem nøglen og de gemte tal på denne telefon?")){ ["token","data","dispatched"].forEach(store.del); location.hash = ""; location.reload(); } };
+["invest", "all"].forEach(k => $("v-" + k).onclick = () => { S.view = k; store.set("view", k); render(); });
+$("m-value").onclick = () => { S.mode = "value"; store.set("mode", "value"); renderChart(); };
+$("m-gain").onclick = () => { S.mode = "gain"; store.set("mode", "gain"); renderChart(); };
+$("g-acc").onclick = () => { S.group = "acc"; store.set("group", "acc"); renderHold(); };
+$("g-pos").onclick = () => { S.group = "pos"; store.set("group", "pos"); renderHold(); };
+$("q").addEventListener("input", () => { S.q = $("q").value; renderHold(); });
+const chartBox = $("chart");
+chartBox.addEventListener("touchstart", scrub, {passive: true}); chartBox.addEventListener("touchmove", scrub, {passive: true});
+chartBox.addEventListener("touchend", unscrub); chartBox.addEventListener("mousemove", scrub); chartBox.addEventListener("mouseleave", unscrub);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && token() && Date.now() - S.lastSync > 60e3) sync(false); });
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (S.data && S.tab === "chart") renderChart(); }, 150); });
+setInterval(() => { if (S.data && !S.busy) renderStatus(); }, 60e3);
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+if (token()) start(); else showSetup();
+</script>
+</body>
+</html>
