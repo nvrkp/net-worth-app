@@ -193,9 +193,9 @@ nav.tabs button[aria-selected=true]{color:var(--accent-ink);font-weight:600}
 <section id="setup" class="setup hidden" aria-labelledby="setupTitle">
   <div class="kicker">Net Worth · iPhone</div>
   <h1 id="setupTitle">Forbind til GitHub</h1>
-  <p>Appen læser din formue fra det private repo <b>nvrkp/net-worth</b>. Den skal bruge en nøgle, der kun kan læse det repo og starte en opdatering. Nøglen gemmes kun på denne telefon.</p>
+  <p>Appen læser din formue fra det private repo <b>skwoxz/net-worth</b>. Den skal bruge en nøgle, der kun kan læse det repo og starte en opdatering. Nøglen gemmes kun på denne telefon.</p>
   <ol>
-    <li>Tryk <a id="patlink" href="#" target="_blank" rel="noopener">Lav nøgle på GitHub</a> og log ind som <b>nvrkp</b>.</li>
+    <li>Tryk <a id="patlink" href="#" target="_blank" rel="noopener">Lav nøgle på GitHub</a> og log ind som <b>skwoxz</b>.</li>
     <li><b>Repository access</b>: Only select repositories → <b>net-worth</b>.</li>
     <li><b>Permissions</b>: Actions: <b>Read and write</b>. Contents: <b>Read-only</b>.</li>
     <li>Udløb: længst muligt. Tryk <b>Generate token</b> og kopiér den.</li>
@@ -284,7 +284,7 @@ nav.tabs button[aria-selected=true]{color:var(--accent-ink);font-weight:600}
       <div class="card note" id="about"></div>
       <h2>Telefon</h2>
       <button class="btn wide" id="logout">Glem nøgle og gemte tal</button>
-      <p class="note" style="text-align:center">Net Worth iPhone · data fra nvrkp/net-worth</p>
+      <p class="note" style="text-align:center">Net Worth iPhone · data fra skwoxz/net-worth</p>
     </section>
   </main>
 
@@ -302,7 +302,7 @@ nav.tabs button[aria-selected=true]{color:var(--accent-ink);font-weight:600}
 
 <script>
 "use strict";
-const REPO = "nvrkp/net-worth";
+const REPO = "skwoxz/net-worth";
 const API = "https://api.github.com/repos/" + REPO;
 // Prices older than this start a cloud refresh when the app opens: 15 min while
 // Europe or the US trades (weekdays 08:00 to 22:30 Copenhagen time), 2 hours
@@ -799,7 +799,7 @@ async function saveToken(){
   $("tokerr").textContent = "Tjekker …";
   try{
     const r = await fetch(API, {cache: "no-store", headers: {"Authorization": "Bearer " + t}});
-    if (!r.ok){ $("tokerr").textContent = (r.status === 404 || r.status === 401) ? "Nøglen kan ikke se nvrkp/net-worth. Tjek repo og rettigheder." : "GitHub svarede " + r.status + "."; return; }
+    if (!r.ok){ $("tokerr").textContent = (r.status === 404 || r.status === 401) ? "Nøglen kan ikke se skwoxz/net-worth. Tjek repo og rettigheder." : "GitHub svarede " + r.status + "."; return; }
   }catch(e){ $("tokerr").textContent = "Ingen forbindelse til GitHub."; return; }
   store.set("token", t); $("tok").value = ""; start();
 }
@@ -812,7 +812,7 @@ function start(){
   sync(false);
 }
 $("patlink").href = "https://github.com/settings/personal-access-tokens/new?name=" + encodeURIComponent("Net Worth iPhone") +
-  "&description=" + encodeURIComponent("Læser nvrkp/net-worth og starter opdateringen") + "&target_name=nvrkp&expires_in=366&contents=read&actions=write";
+  "&description=" + encodeURIComponent("Læser skwoxz/net-worth og starter opdateringen") + "&target_name=skwoxz&expires_in=366&contents=read&actions=write";
 $("tokbtn").onclick = saveToken;
 $("tok").addEventListener("keydown", e => { if (e.key === "Enter") saveToken(); });
 $("refresh").onclick = () => sync(true);
