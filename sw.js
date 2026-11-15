@@ -1,6 +1,6 @@
 // App shell only. Never touches GitHub API answers: the figures live in the
 // page's own storage and are always re-read from the private repo.
-const SHELL = "nw-shell-v3";
+const SHELL = "nw-shell-v4";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-180.png", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener("activate", e => {

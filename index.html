@@ -79,6 +79,10 @@ h2 small{font-size:12px;font-weight:400;color:var(--muted)}
 .dot.warn{background:var(--down)}
 .dot.old{background:var(--neutral)}
 @keyframes pulse{to{opacity:.25}}
+.perp{display:block;width:100%;text-align:left;margin:10px 0 0;border-style:dashed}
+.perp .k{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+.perp .v{font-size:18px;font-weight:600;margin:2px 0}
+.perp .s{font-size:12px;color:var(--muted)}
 .spark{display:block;width:100%;height:58px;margin:12px 0 0}
 .sparkcap{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:2px 0 14px}
 
@@ -228,6 +232,7 @@ nav.tabs button[aria-selected=true]{color:var(--accent-ink);font-weight:600}
         <div class="d" id="day"></div>
       </div>
       <div class="status"><span class="dot" id="dot"></span><span id="status">Henter …</span></div>
+      <button class="card perp hidden" id="perp" aria-label="Estimat siden lukning"></button>
       <svg class="spark" id="spark" role="img" aria-label="Afkast i år"></svg>
       <div class="sparkcap"><span>Afkast i år</span><span id="sparkv"></span></div>
       <div class="tiles" id="tiles"></div>
@@ -312,7 +317,7 @@ const POLL_S = 4, POLL_MAX_S = 180;
 const BUCKET_COLOR = {"Bolig":"--s7","Aktier":"--s1","Fonde & ETF":"--s3","Krypto":"--s4","Obligationer":"--s6",
   "Optioner":"--s5","Derivater P/L":"--s2","Kontant":"--neutral","Gæld":"--down"};
 const TABS = ["home", "chart", "hold", "more"];
-const SORTS = [["value","Værdi"],["day","I dag"],["ytd","I år"],["name","Navn"]];
+const SORTS = [["value","Værdi"],["day","I dag"],["ytd","I år"],["name","Navn"],["perp","Estimat"]];
 const $ = id => document.getElementById(id);
 const store = {
   get(k, d){ try{ const v = localStorage.getItem("nw." + k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
@@ -502,7 +507,17 @@ function render(){
 function renderHome(){
   const v = V();
   $("total").textContent = kr(v.total);
-  $("day").innerHTML = sk(v.day[0], true) + " (" + sp(v.day[1]) + ') <span class="mut">i dag</span>';
+  const ses = (S.data.session || {}).label || "i dag", Ses = ses.charAt(0).toUpperCase() + ses.slice(1);
+  $("day").innerHTML = sk(v.day[0], true) + " (" + sp(v.day[1]) + ') <span class="mut">' + esc(ses) + "</span>";
+  // weekend and after-hours estimate from perpetual futures: separate from every official figure
+  const pe = v.perp, pb = $("perp");
+  if (pe && ses !== "i dag"){
+    pb.classList.remove("hidden");
+    pb.innerHTML = '<div class="k">Siden ' + esc(ses) + 's lukning · estimat</div><div class="v">' + sk(pe.kr, true) + " " + sp(pe.pct) +
+      '</div><div class="s">Fra perpetual futures (Hyperliquid), der handles hele døgnet. Dækker ' + esc(String(pe.covered)) + " % af beholdningen (" + pe.n +
+      " positioner); resten står i lukkekurs. Hentet " + esc(whenLabel(pe.at)) + ". Ikke en del af formuen ovenfor.</div>";
+    pb.onclick = () => { S.sort = "perp"; store.set("sort", "perp"); S.group = "pos"; store.set("group", "pos"); go("hold", true); };
+  } else pb.classList.add("hidden");
   // sparkline: this year's gain (money in and out removed), zero line dashed
   const w = win("ytd"), pts = (w && w.series) || [], svg = $("spark");
   const W = 340, H = 58;
@@ -524,7 +539,7 @@ function renderHome(){
   const star = v.method_forced ? "*" : "";
   const tile = (label, p, g, key) => '<button class="tile" data-range="' + (key || "") + '"><div class="l">' + label + '</div><div class="p">' +
     sp(p, 1, key ? star : "") + '</div><div class="g">' + sk(g, true) + "</div></button>";
-  $("tiles").innerHTML = tile("I dag", v.day[1], v.day[0], "") + ["ytd", "1y", "max"].map(k => { const x = win(k); return tile(x.label, x.pct, x.gain, k); }).join("");
+  $("tiles").innerHTML = tile(esc(Ses), v.day[1], v.day[0], "") + ["ytd", "1y", "max"].map(k => { const x = win(k); return tile(x.label, x.pct, x.gain, k); }).join("");
   $("tiles").querySelectorAll("button[data-range]").forEach(b => b.onclick = () => { if (b.dataset.range){ S.range = b.dataset.range; store.set("range", S.range); } go("chart", true); });
   // donut
   const pos = v.buckets.filter(b => b.value > 0), neg = v.buckets.filter(b => b.value < 0);
@@ -661,6 +676,7 @@ function unscrub(){
 // ---------- holdings ----------
 function sortKey(p){
   if (S.sort === "day") return -(p.day[1] ?? -1e9);
+  if (S.sort === "perp") return p.perp ? -Math.abs(p.perp.kr || 0) : (p.positions ? -Math.abs(p.positions.reduce((a, q) => a + (q.perp ? q.perp.kr : 0), 0)) : 1e12);
   if (S.sort === "ytd") return -(p.ytd[1] ?? -1e9);
   if (S.sort === "name") return 0;
   return -Math.abs(p.value || 0);
@@ -675,7 +691,7 @@ function posRow(p, showAcc){
   return '<button class="pos" data-k="' + esc(p.account + "|" + p.name) + '"><div class="row1"><span class="n">' + esc(p.name) +
     (p.stale ? '<span class="tag">gammel kurs</span>' : "") + '</span><span class="val">' + esc(kr(p.value)) +
     '</span></div><div class="row2"><span>' + esc([showAcc ? p.account : p.ticker, p.bucket].filter(Boolean).join(" · ")) + "</span><span>" +
-    sp(p.day[1]) + " · " + sp(p.ytd[1], 1, p.ytd_star) + " i år</span></div></button>";
+    sp(p.day[1]) + " · " + sp(p.ytd[1], 1, p.ytd_star) + " i år" + (S.sort === "perp" && p.perp ? " · est. " + sp(p.perp.move) : "") + "</span></div></button>";
 }
 function renderHold(){
   const v = V(); if (!v) return;
@@ -725,7 +741,7 @@ function openPos(k){
   const rows = [["Værdi", esc(kr(p.value))], ["Andel af formuen", num(p.share) ? esc(sn(nf1, p.share)) + " %" : "-"],
     ["I dag", sk(p.day[0], true) + " " + sp(p.day[1])], ["I år", sk(p.ytd[0], true) + " " + sp(p.ytd[1], 1, p.ytd_star)],
     ["Siden køb", sk(p.total[0], true) + " " + sp(p.total[1], 1)], ["Antal", esc(qty) + (p.mult && p.mult !== 1 ? " × " + esc(sn(nfq, p.mult)) : "")],
-    ["Kurs", esc(px)], ["Købskurs", esc(cost)], ["Retning", p.short ? "Short" : "Long"], ["Købt", esc(p.bought ? dateLabel(p.bought) : "-")],
+    ["Kurs", esc(px)], ...(p.perp ? [["Estimat siden lukning", sp(p.perp.move) + " (" + sk(p.perp.kr, true) + ") <span class=\"mut\">" + esc(p.perp.perp) + "</span>"]] : []), ["Købskurs", esc(cost)], ["Retning", p.short ? "Short" : "Long"], ["Købt", esc(p.bought ? dateLabel(p.bought) : "-")],
     ["Konto", esc(p.account)], ["Ejer", esc(p.owner)]];
   $("sheet").innerHTML = '<div class="grab"></div><h3 id="shTitle">' + esc(p.name) + '</h3><div class="sub">' + esc([p.ticker, p.bucket].filter(Boolean).join(" · ")) +
     (p.stale ? ' · <span class="warn">ingen frisk kurs</span>' : "") + (p.fx_missing ? ' · <span class="warn">mangler valutakurs</span>' : "") + "</div>" +
